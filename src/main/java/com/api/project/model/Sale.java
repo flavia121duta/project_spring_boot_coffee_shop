@@ -1,7 +1,6 @@
 package com.api.project.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

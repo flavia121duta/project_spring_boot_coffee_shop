@@ -54,4 +54,25 @@ public class SaleRestController {
 //    public ResponseEntity<?> getBestSellingProduct() {
 //        return ResponseEntity.ok().body()saleService.getBestSellingProduct();
 //    }
+
+    @PutMapping("/{saleId}")
+    public ResponseEntity<Sale> updateSale(@RequestBody @Valid SaleRequest theSale,
+                                                   @PathVariable int saleId) {
+        return ResponseEntity.ok().body(
+                saleService.update(saleMapper.saleRequestToOrder(theSale), saleId)
+        );
+    }
+
+    @DeleteMapping("/{saleId}")
+    public String deleteSale(@PathVariable int saleId) {
+        saleService.deleteById(saleId);
+        return "The sale with the id: " + saleId + " was successfully deleted.";
+    }
+
+    @DeleteMapping
+    public String deleteAllSles() {
+        int numberOfSles = saleService.findAll().size();
+        saleService.deleteAll();
+        return "All " + numberOfSles + " sales were successfully deleted from the database.";
+    }
 }

@@ -21,6 +21,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             value = "UPDATE Product p SET p.price = ROUND(p.price * (1 - :discount/100), 2)  WHERE p.product_id = :id " +
                     "AND CURRENT_DATE BETWEEN '2023-12-20' AND '2023-12-30'")
     void modifyPriceDuringChristmasHoliday(double discount, int id);
-
-    void findProductAndReviewsByProductId(int productId);
 }

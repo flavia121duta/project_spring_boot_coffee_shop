@@ -78,4 +78,32 @@ public class ReviewService {
 
         return theReviewsOfTheProduct;
     }
+
+    public Review update(Review newReview, int reviewId) {
+        Optional<Review> theReview = reviewRepository.findById(reviewId);
+        if(theReview.isEmpty()) {
+            throw new ReviewNotFoundException("The review with the id " + reviewId + " was not found");
+        }
+
+        Review dbReview = theReview.get();
+        dbReview.setProduct(newReview.getProduct());
+        dbReview.setCustomer(newReview.getCustomer());
+        dbReview.setNote(newReview.getNote());
+        dbReview.setStars(newReview.getStars());
+
+        return reviewRepository.save(dbReview);
+    }
+
+    public void deleteById(int reviewId) {
+        Optional<Review> theReview = reviewRepository.findById(reviewId);
+        if(theReview.isEmpty()) {
+            throw new ReviewNotFoundException("The review with the id " + reviewId + " was not found");
+        }
+
+        reviewRepository.deleteById(reviewId);
+    }
+
+    public void deleteAll() {
+        reviewRepository.deleteAll();
+    }
 }

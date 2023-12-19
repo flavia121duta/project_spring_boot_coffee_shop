@@ -10,7 +10,6 @@ import com.api.project.repository.ProfileRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +52,10 @@ public class EmployeeService {
         }
 
         return theEmployee;
+    }
+
+    public List<Employee> findEmployeesAboveSalary(double theSalary) {
+        return employeeRepository.findEmployeesAboveSalary(theSalary);
     }
 
     public Employee update(Employee newEmployee, int theId) {

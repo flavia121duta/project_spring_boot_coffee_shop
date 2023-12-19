@@ -1,7 +1,6 @@
 package com.api.project.controller;
 
 import com.api.project.dto.EmployeeRequest;
-import com.api.project.exception.EmployeeNotFoundException;
 import com.api.project.mapper.EmployeeMapper;
 import com.api.project.model.Employee;
 import com.api.project.service.EmployeeService;
@@ -63,6 +62,11 @@ public class EmployeeRestController {
     @GetMapping("/name/{lastName}")
     public ResponseEntity<?> findByLastName(@PathVariable String lastName) {
         return ResponseEntity.ok().body(employeeService.findByLastName(lastName));
+    }
+
+    @GetMapping("/above-salary/{theSalary}")
+    public ResponseEntity<List<Employee>> findEmployeesAboveSalary(@PathVariable double theSalary) {
+        return ResponseEntity.ok().body(employeeService.findEmployeesAboveSalary(theSalary));
     }
 
 

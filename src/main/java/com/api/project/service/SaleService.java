@@ -1,6 +1,5 @@
 package com.api.project.service;
 
-import ch.qos.logback.core.joran.conditional.ThenAction;
 import com.api.project.dto.SaleRequest;
 import com.api.project.exception.EmployeeNotFoundException;
 import com.api.project.exception.ProductNotFoundException;
@@ -12,7 +11,6 @@ import com.api.project.repository.EmployeeRepository;
 import com.api.project.repository.ProductRepository;
 import com.api.project.repository.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -93,5 +91,31 @@ public class SaleService {
         return theSale.get().getTotalPrice();
     }
 
+    public Sale update(Sale newSale, int saleId) {
+        Optional<Sale> theSale = saleRepository.findById(saleId);
+        if (theSale.isEmpty()) {
+            throw new SaleNotFoundException("The sale with the id " + saleId + " was not found");
+        }
 
+        Sale dbSale = theSale.get();
+        dbSale.setProducts(newSale.getProducts());
+        dbSale.setEmployee(newSale.getEmployee());
+        dbSale.setDateOfOrder(newSale.getDateOfOrder());
+        dbSale.setPaymentMethod(newSale.getPaymentMethod());
+
+        return saleRepository.save(dbSale);
+    }
+
+    public void deleteById(int saleId) {
+        Optional<Sale> theSale = saleRepository.findById(saleId);
+        if(theSale.isEmpty()) {
+            throw new SaleNotFoundException("The sale with the id " + saleId + " was not found");
+        }
+
+        saleRepository.deleteById(saleId);
+    }
+
+    public void deleteAll() {
+        saleRepository.deleteAll();
+    }
 }
