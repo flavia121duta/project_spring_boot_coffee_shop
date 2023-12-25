@@ -1,33 +1,41 @@
 package com.api.project.exception.advice;
 
+import com.api.project.exception.ErrorResponse;
 import com.api.project.exception.NotFoundException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ErrorControllerAdvice {
 
-    @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<String> handle(NotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage() + " at " + LocalDateTime.now());
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(NotFoundException exc) {
+        // create an ErrorResponse
+        ErrorResponse error = new ErrorResponse();
+
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setMessage(exc.getMessage());
+        error.setTimestamp(LocalDateTime.now());
+
+        // return the ResponseEntity
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException exception) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                .body(exception.getBindingResult().getAllErrors().stream()
-//                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-//                        .collect(Collectors.joining(", ")));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-               .body(exception.getMessage());
+    // exception handler for any type of exception thrown
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(Exception exc) {
+        // create an ErrorResponse
+        ErrorResponse error = new ErrorResponse();
 
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(exc.getMessage());
+        error.setTimestamp(LocalDateTime.now());
+
+        // return the ResponseEntity
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
