@@ -1,5 +1,6 @@
 package com.api.project.service;
 
+import com.api.project.exception.DuplicateProductException;
 import com.api.project.exception.ProductNotFoundException;
 import com.api.project.model.Product;
 import com.api.project.model.ProductType;
@@ -22,6 +23,10 @@ public class ProductService {
     }
 
     public Product create(Product theProduct) {
+        Optional<Product> existingProductSameName = productRepository.findByProductName(theProduct.getProductName());
+        existingProductSameName.ifPresent(e -> {
+            throw new DuplicateProductException(theProduct.getProductName());
+        });
         return productRepository.save(theProduct);
     }
 
@@ -33,18 +38,24 @@ public class ProductService {
         Optional<Product> theProduct = productRepository.findById(theId);
 
         if (theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + theId + " was not found");
+            throw new ProductNotFoundException(theId);
         }
 
         return theProduct;
     }
 
+    // TODO: handle exception for no available type provided
     public List<Product> getProductsByType(ProductType type) {
         return productRepository.findByProductType(type);
     }
 
-    public List<Product> getProductsByName(String name) {
-        return productRepository.findByProductName(name);
+
+    public Product getProductByName(String name) {
+        Optional<Product> theProduct = productRepository.findByProductName(name);
+        if (theProduct.isEmpty()) {
+            throw new ProductNotFoundException(name);
+        }
+        return theProduct.get();
     }
 
     public double getAveragePriceForProductType(ProductType type) {
@@ -54,7 +65,7 @@ public class ProductService {
     public List<Review> findProductAndReviewsByProductId(int productId) {
         Optional<Product> theProduct = productRepository.findById(productId);
         if(theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + productId + " was not found");
+            throw new ProductNotFoundException(productId);
         }
 
         return theProduct.get().getReviews();
@@ -65,7 +76,7 @@ public class ProductService {
         Optional<Product> theProduct = productRepository.findById(productId);
 
         if (theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + productId + " was not found");
+            throw new ProductNotFoundException(productId);
         }
 
         Product dbProduct = theProduct.get();
@@ -81,7 +92,7 @@ public class ProductService {
         Optional<Product> theProduct = productRepository.findById(theId);
 
         if (theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + theId + " was not found. No update was performed on the database");
+            throw new ProductNotFoundException(theId);
         }
 
         productRepository.modifyPriceDuringChristmasHoliday(discount, theId);
@@ -92,7 +103,7 @@ public class ProductService {
         Optional<Product> theProduct = productRepository.findById(theId);
 
         if (theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + theId + " was not found. No delete performed on the database");
+            throw new ProductNotFoundException(theId);
         }
 
         productRepository.deleteById(theId);

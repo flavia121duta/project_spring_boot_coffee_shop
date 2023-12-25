@@ -34,12 +34,12 @@ public class ReviewService {
     public Review create(Review theReview, int productId, int customerId) {
         Optional<Product> theProduct = productRepository.findById(productId);
         if(theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + productId + " was not found");
+            throw new ProductNotFoundException(productId);
         }
 
         Optional<Customer> theCustomer = customerRepository.findById(customerId);
         if(theCustomer.isEmpty()) {
-            throw new CustomerNotFoundException("The customer with the id " + customerId + " was not found");
+            throw new CustomerNotFoundException(customerId);
         }
 
         theReview.setCustomer(theCustomer.get());
@@ -55,7 +55,7 @@ public class ReviewService {
         Optional<Review> theReview = reviewRepository.findById(theId);
 
         if (theReview.isEmpty()) {
-            throw new ReviewNotFoundException("The review with the id " + theId + " was not found");
+            throw new ReviewNotFoundException(theId);
         }
 
         return theReview;
@@ -64,7 +64,7 @@ public class ReviewService {
     public List<Review> findAllReviewOfProduct(int productId) {
         Optional<Product> theProduct = productRepository.findById(productId);
         if(theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with teh id " + productId + " was not found");
+            throw new ProductNotFoundException(productId);
         }
 
         List<Review> allReviews = reviewRepository.findAll();
@@ -82,7 +82,7 @@ public class ReviewService {
     public Review update(Review newReview, int reviewId) {
         Optional<Review> theReview = reviewRepository.findById(reviewId);
         if(theReview.isEmpty()) {
-            throw new ReviewNotFoundException("The review with the id " + reviewId + " was not found");
+            throw new ReviewNotFoundException(reviewId);
         }
 
         Review dbReview = theReview.get();
@@ -97,7 +97,7 @@ public class ReviewService {
     public void deleteById(int reviewId) {
         Optional<Review> theReview = reviewRepository.findById(reviewId);
         if(theReview.isEmpty()) {
-            throw new ReviewNotFoundException("The review with the id " + reviewId + " was not found");
+            throw new ReviewNotFoundException(reviewId);
         }
 
         reviewRepository.deleteById(reviewId);

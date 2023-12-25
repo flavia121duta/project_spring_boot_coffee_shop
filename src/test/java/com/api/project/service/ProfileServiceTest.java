@@ -5,6 +5,7 @@ import com.api.project.model.Profile;
 import com.api.project.model.ShiftType;
 import com.api.project.repository.EmployeeRepository;
 import com.api.project.repository.ProfileRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,24 +31,17 @@ public class ProfileServiceTest {
     private ProfileRepository profileRepository;
 
     @Test
-    public void createProfileTest() {
+    @DisplayName("When the id of the employee received as parameter was not found in the database, then throw a custom exception")
+    public void whenEmployeeIdIsWrong_createProfileTest_throwExceptionEmployeeNotFound() {
         // arrange
-        int employeeId = 1;
+        int employeeId = 0;
 
-        Profile theProfile = new Profile(
-                "marian_popa@gmail.com",
-                "07441519197",
-                "Str. Libertatii, nr. 19, 038919",
-                2567.0,
-                ShiftType.FULL_TIME,
-                LocalDate.of(2000, 2, 17),
-                "https://www.linkedin.com/in/marian-popa-223903245/");
-
+        Profile theProfile = null;
 
         // act
         RuntimeException result = assertThrows(
             RuntimeException.class,
-            () -> profileService.create(theProfile, employeeId)
+            () -> profileService.createProfileForEmployee(theProfile, employeeId)
         );
 
         // assert

@@ -7,11 +7,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByProductType(ProductType productType);
 
-    List<Product> findByProductName(String productName);
+    Optional<Product> findByProductName(String productName);
 
     @Query("SELECT ROUND(AVG(p.price), 2) FROM Product p WHERE p.productType = :type")
     double getAveragePriceForProductType(ProductType type);

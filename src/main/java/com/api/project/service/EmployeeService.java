@@ -1,7 +1,6 @@
 package com.api.project.service;
 
 import com.api.project.exception.EmployeeNotFoundException;
-import com.api.project.exception.ProductNotFoundException;
 import com.api.project.exception.ProfileNotFoundException;
 import com.api.project.model.Employee;
 import com.api.project.model.Profile;
@@ -26,14 +25,21 @@ public class EmployeeService {
         this.profileRepository = profileRepository;
     }
 
-    public Employee create(Employee theEmployee) {
+    public Employee createEmployee(Employee theEmployee) {
+        if (theEmployee == null) {
+            throw new RuntimeException("The body of the entity employee is null");
+        }
         return employeeRepository.save(theEmployee);
     }
 
-    public Employee create(Employee theEmployee, int profileId) {
+    public Employee createEmployeeWithProfile(Employee theEmployee, int profileId) {
         Optional<Profile> theProfile = profileRepository.findById(profileId);
         if (theProfile.isEmpty()) {
-            throw new ProfileNotFoundException("The profile with the id " + profileId + " was not found");
+            throw new ProfileNotFoundException(profileId);
+        }
+
+        if (theEmployee == null) {
+            throw new RuntimeException("The body of the entity employee is null");
         }
 
         theEmployee.setProfile(theProfile.get());
@@ -48,7 +54,7 @@ public class EmployeeService {
         Optional<Employee> theEmployee = employeeRepository.findById(theId);
 
         if (theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException("The employee with the id: " + theId + " was not found");
+            throw new EmployeeNotFoundException(theId);
         }
 
         return theEmployee;
@@ -58,11 +64,11 @@ public class EmployeeService {
         return employeeRepository.findEmployeesAboveSalary(theSalary);
     }
 
-    public Employee update(Employee newEmployee, int theId) {
+    public Employee updateEmployee(Employee newEmployee, int theId) {
         Optional<Employee> theEmployee = employeeRepository.findById(theId);
 
         if (theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException("The employee with the id: " + theId + " was not found");
+            throw new EmployeeNotFoundException(theId);
         }
 
         Employee dbEmployee = theEmployee.get();
@@ -72,16 +78,16 @@ public class EmployeeService {
         return employeeRepository.save(dbEmployee);
     }
 
-    public Employee update(Employee newEmployee, int theId, int profileId) {
+    public Employee updateEmployeeWithProfile(Employee newEmployee, int theId, int profileId) {
         Optional<Employee> theEmployee = employeeRepository.findById(theId);
         Optional<Profile> theProfile = profileRepository.findById(profileId);
 
         if (theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException("The employee with the id " + theId + " was not found");
+            throw new EmployeeNotFoundException(theId);
         }
 
         if (theProfile.isEmpty()) {
-            throw new ProductNotFoundException("The profile with the id " + theId + " was not found");
+            throw new ProfileNotFoundException(theId);
         }
 
         Employee dbEmployee = theEmployee.get();
@@ -96,7 +102,7 @@ public class EmployeeService {
         List<Employee> theEmployees = employeeRepository.findByLastName(lastName);
 
         if (theEmployees.isEmpty()) {
-            throw new EmployeeNotFoundException("No employee has the last name: " + lastName + " found in the database");
+            throw new EmployeeNotFoundException(lastName);
         }
 
         return theEmployees;
@@ -106,8 +112,7 @@ public class EmployeeService {
         Optional<Employee> theEmployee = employeeRepository.findById(theId);
 
         if(theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException("The employee with the id: " + theId + " was not found. " +
-                    "No delete performed on the database");
+            throw new EmployeeNotFoundException(theId);
         }
 
         employeeRepository.deleteById(theId);

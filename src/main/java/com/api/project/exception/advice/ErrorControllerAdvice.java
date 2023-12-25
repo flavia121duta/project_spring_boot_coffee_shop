@@ -1,6 +1,7 @@
 package com.api.project.exception.advice;
 
 import com.api.project.exception.NotFoundException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,9 +22,12 @@ public class ErrorControllerAdvice {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException exception) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                .body(exception.getBindingResult().getAllErrors().stream()
+//                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+//                        .collect(Collectors.joining(", ")));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(exception.getBindingResult().getAllErrors().stream()
-                        .map(error -> error.getDefaultMessage())
-                        .collect(Collectors.joining(", ")));
+               .body(exception.getMessage());
+
     }
 }

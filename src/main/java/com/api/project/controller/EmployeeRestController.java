@@ -28,14 +28,14 @@ public class EmployeeRestController {
         if (profileId == null) {
             return ResponseEntity
                     .ok()
-                    .body(employeeService.create(
+                    .body(employeeService.createEmployee(
                             employeeMapper.convertRequestToEmployee(theEmployee)
                     ));
         }
 
         return ResponseEntity
                 .ok()
-                .body(employeeService.create(
+                .body(employeeService.createEmployeeWithProfile(
                         employeeMapper.convertRequestToEmployee(theEmployee),
                         profileId
                 ));
@@ -77,14 +77,14 @@ public class EmployeeRestController {
 
         if (profileId == null) {
             return ResponseEntity.ok().body(
-                    employeeService.update(
+                    employeeService.updateEmployee(
                             employeeMapper.convertRequestToEmployee(theEmployee),
                             employeeId
                     ));
         }
 
         return ResponseEntity.ok().body(
-                employeeService.update(
+                employeeService.updateEmployeeWithProfile(
                         employeeMapper.convertRequestToEmployee(theEmployee),
                         employeeId,
                         profileId

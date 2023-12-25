@@ -35,13 +35,13 @@ public class SaleService {
     public Sale createSale(SaleRequest saleRequest) {
         Optional<Employee> theEmployee = employeeRepository.findById(saleRequest.getEmployeeId());
         if(theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException("The employee with the id " + saleRequest.getEmployeeId() + " does not exist");
+            throw new EmployeeNotFoundException(saleRequest.getEmployeeId());
         }
 
         List<Product> theProducts = new ArrayList<>();
         for (Integer productId: saleRequest.getProductIds()) {
             Product product = productRepository.findById(productId).orElseThrow(
-                    () -> new ProductNotFoundException("The product with the id " + productId + " was not found"));
+                    () -> new ProductNotFoundException(productId));
             theProducts.add(product);
         }
 
@@ -61,7 +61,7 @@ public class SaleService {
     public Optional<Sale> findById(int theId) {
         Optional<Sale> theSale = saleRepository.findById(theId);
         if(theSale.isEmpty()) {
-            throw new SaleNotFoundException("The sale with the id " + theId + " was not found");
+            throw new SaleNotFoundException(theId);
         }
         return theSale;
     }
@@ -69,7 +69,7 @@ public class SaleService {
     public List<Sale> getSaleThatContainsProduct(int productId) {
         Optional<Product> theProduct = productRepository.findById(productId);
         if(theProduct.isEmpty()) {
-            throw new ProductNotFoundException("The product with the id " + productId + " was not found");
+            throw new ProductNotFoundException(productId);
         }
 
         List<Sale> allSales = saleRepository.findAll();
@@ -85,7 +85,7 @@ public class SaleService {
     public double getTotalPriceOfSaleBySaleId(int saleId) {
         Optional<Sale> theSale = saleRepository.findById(saleId);
         if(theSale.isEmpty()) {
-            throw new SaleNotFoundException("The sale with the id " + saleId + " was not found");
+            throw new SaleNotFoundException(saleId);
         }
 
         return theSale.get().getTotalPrice();
@@ -94,7 +94,7 @@ public class SaleService {
     public Sale update(Sale newSale, int saleId) {
         Optional<Sale> theSale = saleRepository.findById(saleId);
         if (theSale.isEmpty()) {
-            throw new SaleNotFoundException("The sale with the id " + saleId + " was not found");
+            throw new SaleNotFoundException(saleId);
         }
 
         Sale dbSale = theSale.get();
@@ -109,7 +109,7 @@ public class SaleService {
     public void deleteById(int saleId) {
         Optional<Sale> theSale = saleRepository.findById(saleId);
         if(theSale.isEmpty()) {
-            throw new SaleNotFoundException("The sale with the id " + saleId + " was not found");
+            throw new SaleNotFoundException(saleId);
         }
 
         saleRepository.deleteById(saleId);

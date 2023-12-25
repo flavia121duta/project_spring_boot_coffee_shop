@@ -28,21 +28,21 @@ public class ProfileService {
     }
 
     public Profile findById(int theId) {
-        return profileRepository.findById(theId).orElseThrow(() -> new ProfileNotFoundException("The profile with the id: " + theId + " was not found in the database"));
+        return profileRepository.findById(theId).orElseThrow(() -> new ProfileNotFoundException(theId));
     }
 
-    public double gentAverageSalary() {
+    public double getAverageSalary() {
         return profileRepository.getAverageSalary();
     }
 
-    public Profile create(Profile theProfile) {
+    public Profile createProfile(Profile theProfile) {
         return  profileRepository.save(theProfile);
     }
 
-    public Profile create(Profile theProfile, int employeeId) {
+    public Profile createProfileForEmployee(Profile theProfile, int employeeId) {
         Optional<Employee> theEmployee = employeeRepository.findById(employeeId);
         if (theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException("The employee with the id " + employeeId + " was not found in the database");
+            throw new EmployeeNotFoundException(employeeId);
         }
 
         theProfile.setEmployee(theEmployee.get());
@@ -53,7 +53,7 @@ public class ProfileService {
         Optional<Profile> theProfile = profileRepository.findById(profileId);
 
         if (theProfile.isEmpty()) {
-            throw new ProfileNotFoundException("The profile with the id " + profileId + " was not found");
+            throw new ProfileNotFoundException(profileId);
         }
 
         Profile dbProfile = theProfile.get();
@@ -73,7 +73,7 @@ public class ProfileService {
         Optional<Profile> theProfile = profileRepository.findById(theId);
 
         if (theProfile.isEmpty()) {
-            throw new ProfileNotFoundException("The profile with the id " + theId + " was not found");
+            throw new ProfileNotFoundException(theId);
         }
 
         Profile profile = theProfile.get();

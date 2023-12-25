@@ -20,7 +20,7 @@ public class EmployeeServiceIT {
         Employee newEmployee = new Employee("Mihai", "Dascalescu");
 
         // act
-        Employee result = employeeService.create(newEmployee);
+        Employee result = employeeService.createEmployee(newEmployee);
 
         // assert
         assertEquals(newEmployee, result, "Should be equals");

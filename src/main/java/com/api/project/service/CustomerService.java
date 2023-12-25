@@ -30,7 +30,7 @@ public class CustomerService {
         Optional<Customer> theCustomer = customerRepository.findById(theId);
 
         if (theCustomer.isEmpty()) {
-            throw new CustomerNotFoundException("The customer with the id: " + theId + " was not found");
+            throw new CustomerNotFoundException(theId);
         }
 
         return theCustomer;
@@ -40,7 +40,7 @@ public class CustomerService {
         Optional<Customer> theCustomer = customerRepository.findById(theId);
 
         if (theCustomer.isEmpty()) {
-            throw new CustomerNotFoundException("The customer with the id: " + theId + " was not found");
+            throw new CustomerNotFoundException(theId);
         }
 
         Customer dbCustomer = theCustomer.get();
@@ -55,7 +55,7 @@ public class CustomerService {
         Optional<Customer> theCustomer = customerRepository.findById(theId);
 
         if(theCustomer.isEmpty()) {
-            throw new CustomerNotFoundException("The customer with the id: " + theId + " was not found");
+            throw new CustomerNotFoundException(theId);
         }
 
         customerRepository.deleteById(theId);

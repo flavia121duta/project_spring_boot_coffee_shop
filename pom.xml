@@ -94,7 +94,7 @@
 					<image>
 						<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 					</image>
-				</configuration>
+			</configuration>
 			</plugin>
 		</plugins>
 	</build>

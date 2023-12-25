@@ -39,6 +39,11 @@ public class ProductRestController {
         return ResponseEntity.ok().body(productService.findById(productId));
     }
 
+    @GetMapping("/product-name/{productName}")
+    public ResponseEntity<?> getProductsByName(@PathVariable String productName) {
+        return ResponseEntity.ok().body(productService.getProductByName(productName));
+    }
+
     @GetMapping("/average-price/{type}")
     public double getAveragePriceOfProductType(@PathVariable ProductType type) {
         return productService.getAveragePriceForProductType(type);

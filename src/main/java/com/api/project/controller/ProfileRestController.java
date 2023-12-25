@@ -29,12 +29,12 @@ public class ProfileRestController {
         if (employeeId == null) {
             return ResponseEntity
                     .ok()
-                    .body(profileService.create(profileMapper.profileRequestToProfile(theProfile)));
+                    .body(profileService.createProfile(profileMapper.profileRequestToProfile(theProfile)));
         }
 
         return ResponseEntity
                 .ok()
-                .body(profileService.create(profileMapper.profileRequestToProfile(theProfile), employeeId));
+                .body(profileService.createProfileForEmployee(profileMapper.profileRequestToProfile(theProfile), employeeId));
     }
 
     @GetMapping
@@ -49,7 +49,7 @@ public class ProfileRestController {
 
     @GetMapping("/average-salary")
     public double getAverageSalary() {
-        return profileService.gentAverageSalary();
+        return profileService.getAverageSalary();
     }
 
     @PutMapping("/{profileId}")
