@@ -10,9 +10,12 @@ import com.api.project.model.Sale;
 import com.api.project.repository.EmployeeRepository;
 import com.api.project.repository.ProductRepository;
 import com.api.project.repository.SaleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,7 @@ public class SaleService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public Sale createSale(SaleRequest saleRequest) {
         Optional<Employee> theEmployee = employeeRepository.findById(saleRequest.getEmployeeId());
         if(theEmployee.isEmpty()) {
@@ -47,7 +51,10 @@ public class SaleService {
 
         Sale theSale = new Sale();
         theSale.setPaymentMethod(saleRequest.getPaymentMethod());
-        theSale.setDateOfOrder(saleRequest.getDateOfOrder());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        theSale.setDateOfOrder(LocalDateTime.now().format(formatter));
+
         theSale.setEmployee(theEmployee.get());
         theSale.setProducts(theProducts);
 
@@ -66,7 +73,7 @@ public class SaleService {
         return theSale;
     }
 
-    public List<Sale> getSaleThatContainsProduct(int productId) {
+    public List<Integer> getSalesThatContainProductByProductId(int productId) {
         Optional<Product> theProduct = productRepository.findById(productId);
         if(theProduct.isEmpty()) {
             throw new ProductNotFoundException(productId);
@@ -79,7 +86,13 @@ public class SaleService {
                 salesThatContainsTheProduct.add(theSale);
             }
         }
-        return salesThatContainsTheProduct;
+
+        List<Integer> ids = new ArrayList<>();
+        for(Sale sale: salesThatContainsTheProduct) {
+            int theId = sale.getSaleId();
+            ids.add(theId);
+        }
+        return ids;
     }
 
     public double getTotalPriceOfSaleBySaleId(int saleId) {
@@ -89,6 +102,15 @@ public class SaleService {
         }
 
         return theSale.get().getTotalPrice();
+    }
+
+    public List<Integer> findSalesTakenByEmployeeGivenByEmployeeId(int employeeId) {
+        Optional<Employee> theEmployee = employeeRepository.findById(employeeId);
+        if (theEmployee.isEmpty()) {
+            throw new EmployeeNotFoundException(employeeId);
+        }
+
+        return saleRepository.findSalesTakenByEmployeeGivenByEmployeeId(employeeId);
     }
 
     public Sale update(Sale newSale, int saleId) {

@@ -36,7 +36,7 @@ public class ProfileService {
     }
 
     public Profile createProfile(Profile theProfile) {
-        return  profileRepository.save(theProfile);
+        return profileRepository.save(theProfile);
     }
 
     public Profile createProfileForEmployee(Profile theProfile, int employeeId) {

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             value = "UPDATE Product p SET p.price = ROUND(p.price * (1 - :discount/100), 2)  WHERE p.product_id = :id " +
                     "AND CURRENT_DATE BETWEEN '2023-12-20' AND '2023-12-30'")
     void modifyPriceDuringChristmasHoliday(double discount, int id);
+
+    @Query("SELECT DISTINCT p FROM Sale s INNER JOIN s.products p WHERE CAST(s.timeOfOrder as date) BETWEEN :date1 AND :date2")
+    List<Product> getProductOrderedBetweenDates(LocalDate date1, LocalDate date2);
+
+    @Query("SELECT p FROM Product p WHERE NOT EXISTS (SELECT r FROM Review r WHERE r.product.productId = p.productId)")
+    List<Product> findProductsWithNoReview();
 }

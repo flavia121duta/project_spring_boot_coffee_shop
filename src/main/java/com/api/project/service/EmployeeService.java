@@ -4,6 +4,7 @@ import com.api.project.exception.EmployeeNotFoundException;
 import com.api.project.exception.ProfileNotFoundException;
 import com.api.project.model.Employee;
 import com.api.project.model.Profile;
+import com.api.project.model.ShiftType;
 import com.api.project.repository.EmployeeRepository;
 import com.api.project.repository.ProfileRepository;
 import jakarta.transaction.Transactional;
@@ -106,6 +107,14 @@ public class EmployeeService {
         }
 
         return theEmployees;
+    }
+
+    public List<Employee> findEmployeesByShiftType(ShiftType shiftType) {
+        return employeeRepository.findEmployeesByShiftType(shiftType);
+    }
+
+    public List<Employee> findEmployeesWithNoSalesTaken() {
+        return  employeeRepository.findEmployeesWithNoSalesTaken();
     }
 
     public void deleteById(int theId) {

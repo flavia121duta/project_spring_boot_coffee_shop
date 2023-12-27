@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -52,6 +53,16 @@ public class ProductRestController {
     @GetMapping("/{productId}/reviews")
     public ResponseEntity<List<Review>> findProductAndReviewByProductId(@PathVariable int productId) {
         return ResponseEntity.ok().body(productService.findProductAndReviewsByProductId(productId));
+    }
+
+    @GetMapping("/sales/sold")
+    public ResponseEntity<List<Product>> getProductOrderedBetweenDates(@RequestParam LocalDate dateStart, @RequestParam LocalDate dateEnd) {
+        return ResponseEntity.ok().body(productService.getProductOrderedBetweenDates(dateStart, dateEnd));
+    }
+
+    @GetMapping("/no-reviews")
+    public ResponseEntity<List<Product>> getProductsWithoutAnyReview() {
+        return ResponseEntity.ok().body(productService.getProductsWithoutAnyReview());
     }
 
     @PostMapping

@@ -46,8 +46,13 @@ public class SaleRestController {
     }
 
     @GetMapping("/product/{productId}")
-    public List<Sale> getAllSalesByProductId(@PathVariable int productId) {
-        return saleService.getSaleThatContainsProduct(productId);
+    public List<Integer> getAllSalesByProductId(@PathVariable int productId) {
+        return saleService.getSalesThatContainProductByProductId(productId);
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public List<Integer> findSalesTakenByEmployeeGivenByEmployeeId(@PathVariable int employeeId) {
+        return saleService.findSalesTakenByEmployeeGivenByEmployeeId(employeeId);
     }
 
 //    @GetMapping("/most-wanted")

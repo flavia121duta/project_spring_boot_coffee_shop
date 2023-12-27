@@ -3,6 +3,7 @@ package com.api.project.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Sale {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    private LocalDate dateOfOrder;
+    private String timeOfOrder;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
@@ -30,9 +31,8 @@ public class Sale {
 
     public Sale() {}
 
-    public Sale(PaymentMethod paymentMethod, LocalDate dateOfOrder) {
+    public Sale(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
-        this.dateOfOrder = dateOfOrder;
     }
 
     public int getSaleId() {
@@ -51,12 +51,12 @@ public class Sale {
         this.paymentMethod = paymentMethod;
     }
 
-    public LocalDate getDateOfOrder() {
-        return dateOfOrder;
+    public String getDateOfOrder() {
+        return timeOfOrder;
     }
 
-    public void setDateOfOrder(LocalDate dateOfOrder) {
-        this.dateOfOrder = dateOfOrder;
+    public void setDateOfOrder(String timeOfOrder) {
+        this.timeOfOrder = timeOfOrder;
     }
 
     public Employee getEmployee() {

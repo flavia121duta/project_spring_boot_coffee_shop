@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,10 @@ public class ProductService {
     }
 
     public Product create(Product theProduct) {
+        if (theProduct == null) {
+            throw new RuntimeException("The body of the entity product is null");
+        }
+
         Optional<Product> existingProductSameName = productRepository.findByProductName(theProduct.getProductName());
         existingProductSameName.ifPresent(e -> {
             throw new DuplicateProductException(theProduct.getProductName());
@@ -44,7 +49,6 @@ public class ProductService {
         return theProduct;
     }
 
-    // TODO: handle exception for no available type provided
     public List<Product> getProductsByType(ProductType type) {
         return productRepository.findByProductType(type);
     }
@@ -71,7 +75,20 @@ public class ProductService {
         return theProduct.get().getReviews();
     }
 
-    // include the id in the @RequestBody of the newProduct
+    public List<Product> getProductOrderedBetweenDates(LocalDate date1, LocalDate date2) {
+        if (date1.isAfter(date2)) {
+            LocalDate auxDate = date1;
+            date1 = date2;
+            date2 = auxDate;
+        }
+
+        return productRepository.getProductOrderedBetweenDates(date1, date2);
+    }
+
+    public List<Product> getProductsWithoutAnyReview() {
+        return productRepository.findProductsWithNoReview();
+    }
+
     public Product update(Product newProduct, int productId) {
         Optional<Product> theProduct = productRepository.findById(productId);
 

@@ -3,6 +3,7 @@ package com.api.project.controller;
 import com.api.project.dto.EmployeeRequest;
 import com.api.project.mapper.EmployeeMapper;
 import com.api.project.model.Employee;
+import com.api.project.model.ShiftType;
 import com.api.project.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,15 @@ public class EmployeeRestController {
         return ResponseEntity.ok().body(employeeService.findEmployeesAboveSalary(theSalary));
     }
 
+    @GetMapping("/shift/{shiftType}")
+    public ResponseEntity<List<Employee>> findEmployeesByShiftType(@PathVariable ShiftType shiftType) {
+        return ResponseEntity.ok().body(employeeService.findEmployeesByShiftType(shiftType));
+    }
+
+    @GetMapping("/no-sales")
+    public ResponseEntity<List<Employee>> findEmployeesWithNoSalesTaken() {
+        return ResponseEntity.ok().body(employeeService.findEmployeesWithNoSalesTaken());
+    }
 
     @PutMapping("/{employeeId}")
     public ResponseEntity<Employee> updateEmployee(@RequestBody @Valid EmployeeRequest theEmployee,

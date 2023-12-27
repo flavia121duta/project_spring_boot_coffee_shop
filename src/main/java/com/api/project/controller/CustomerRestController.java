@@ -44,6 +44,11 @@ public class CustomerRestController {
         );
     }
 
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<List<Customer>> getCustomersWhoSubmitterReviewsToProductByProductId(@PathVariable int productId) {
+        return ResponseEntity.ok().body(customerService.getCustomersWhoSubmitterReviewsToProductByProductId(productId));
+    }
+
     @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@RequestBody @Valid CustomerRequest theCustomer,
                                                    @PathVariable int customerId) {

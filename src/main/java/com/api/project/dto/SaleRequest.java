@@ -4,16 +4,19 @@ import com.api.project.model.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class SaleRequest {
     @NotNull
     private PaymentMethod paymentMethod;
 
-    private LocalDate dateOfOrder;
+    private LocalDateTime timeOfOrder;
 
+    @NotNull
     private int employeeId;
 
+    @NotNull
     private List<Integer> productIds;
 
     public SaleRequest() {
@@ -21,12 +24,10 @@ public class SaleRequest {
 
     public SaleRequest(PaymentMethod paymentMethod, LocalDate dateOfOrder) {
         this.paymentMethod = paymentMethod;
-        this.dateOfOrder = dateOfOrder;
     }
 
-    public SaleRequest(PaymentMethod paymentMethod, LocalDate dateOfOrder, int employeeId, List<Integer> productIds) {
+    public SaleRequest(PaymentMethod paymentMethod, int employeeId, List<Integer> productIds) {
         this.paymentMethod = paymentMethod;
-        this.dateOfOrder = dateOfOrder;
         this.employeeId = employeeId;
         this.productIds = productIds;
     }
@@ -39,12 +40,12 @@ public class SaleRequest {
         this.paymentMethod = paymentMethod;
     }
 
-    public LocalDate getDateOfOrder() {
-        return dateOfOrder;
+    public LocalDateTime getDateOfOrder() {
+        return timeOfOrder;
     }
 
-    public void setDateOfOrder(LocalDate dateOfOrder) {
-        this.dateOfOrder = dateOfOrder;
+    public void setDateOfOrder(LocalDateTime dateOfOrder) {
+        this.timeOfOrder = dateOfOrder;
     }
 
     public int getEmployeeId() {

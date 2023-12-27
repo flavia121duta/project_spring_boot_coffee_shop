@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.BDDAssumptions.given;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -36,7 +35,7 @@ public class EmployeeServiceTest {
     private ProfileRepository profileRepository;
 
     @Test
-    @DisplayName("Given an employee as a parameter, save employee...")
+    @DisplayName("Given an employee that is not null as a parameter, save the employee...")
     public void whenEmployeeIsNotNull_createEmployee_returnEmployee() {
         // arrange
         Employee theEmployee = new Employee("John", "Doe");
@@ -74,16 +73,10 @@ public class EmployeeServiceTest {
     public void whenEmployeeAndProfileIdAreNotNull_createEmployeeWithProfile_returnEmployee() {
         // arrange
         int profileId = 1;
-        Profile theProfile = new Profile(
-                "ionut_popescu@gmail.com",
-                "07331519197",
-                "Str. Pacii, nr. 16, 045916",
-                2867.0,
-                ShiftType.FULL_TIME,
-                LocalDate.of(2000, 3, 16),
-                "https://www.linkedin.com/in/ionut-popescu-223903245/");
+        Profile theProfile = new Profile();
+        theProfile.setProfileId(profileId);
 
-        Employee theEmployee = new Employee("Ionut", "Popescu");
+        Employee theEmployee = new Employee("John", "Doe");
 
         when(profileRepository.findById(profileId)).thenReturn(Optional.of(theProfile));
         when(employeeRepository.save(theEmployee)).thenReturn(theEmployee);
@@ -123,14 +116,8 @@ public class EmployeeServiceTest {
 
         // create a random profile
         int profileId = 1;
-        Profile theProfile = new Profile(
-                "ionut_popescu@gmail.com",
-                "07331519197",
-                "Str. Pacii, nr. 16, 045916",
-                2867.0,
-                ShiftType.FULL_TIME,
-                LocalDate.of(2000, 3, 16),
-                "https://www.linkedin.com/in/ionut-popescu-223903245/");
+        Profile theProfile = new Profile();
+        theProfile.setProfileId(profileId);
         when(profileRepository.findById(profileId)).thenReturn(Optional.of(theProfile));
 
         Employee theEmployee = null;
@@ -187,7 +174,7 @@ public class EmployeeServiceTest {
 
     @Test
     @DisplayName("Find all the employees and return the result as a list...")
-    public void noParameter_findAll_returnsListOfEmployees() {
+    public void findAllEmployees_returnsListOfEmployees() {
         // arrange
         Employee employee1 = new Employee("John", "Doe");
         Employee employee2 = new Employee("Jane", "Dip");
@@ -212,16 +199,22 @@ public class EmployeeServiceTest {
         Employee theEmployee = new Employee("John", "Doe");
         theEmployee.setEmployeeId(theId);
 
-        Employee updatedEmployee = new Employee("Jean", "Doe");
+        Employee newEmployee = new Employee("Jean", "Doe");
 
         when(employeeRepository.findById(theId)).thenReturn(Optional.of(theEmployee));
+        when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // act
-        employeeService.updateEmployee(updatedEmployee, theId);
+        Employee updatedEmployee = employeeService.updateEmployee(newEmployee, theId);
 
         // assert
         verify(employeeRepository).findById(theId);
-        verify(employeeRepository).save(updatedEmployee);
+        verify(employeeRepository, times(1)).findById(theId);
+        verify(employeeRepository, times(1)).save(theEmployee);
+
+        assertEquals(newEmployee.getFirstName(), updatedEmployee.getFirstName());
+        assertEquals(newEmployee.getLastName(), updatedEmployee.getLastName());
+        assertEquals(theId, updatedEmployee.getEmployeeId());
     }
 
     @Test
@@ -300,5 +293,92 @@ public class EmployeeServiceTest {
                 result.getMessage(),
                 "Should be equal"
         );
+    }
+
+    @Test
+    public void findEmployeesAboveSalary_returnValue() {
+        // arrange
+        Profile profile1 = new Profile();
+        profile1.setSalary(2400.0);
+        Profile profile2 = new Profile();
+        profile2.setSalary(2700.0);
+        Profile profile3 = new Profile();
+        profile3.setSalary(2750.0);
+
+        Employee employee1 = new Employee();
+        Employee employee2 = new Employee();
+        Employee employee3 = new Employee();
+
+        employee1.setProfile(profile1);
+        employee2.setProfile(profile2);
+        employee3.setProfile(profile3);
+
+        double theSalary = 2500.0;
+        List<Employee> expectedEmployees = List.of(employee2, employee3);
+
+        when(employeeRepository.findEmployeesAboveSalary(theSalary)).thenReturn(expectedEmployees);
+
+        // act
+        List<Employee> result = employeeService.findEmployeesAboveSalary(theSalary);
+
+        // Assert
+        assertEquals(expectedEmployees.size(), result.size());
+        assertEquals(expectedEmployees, result);
+        verify(employeeRepository, times(1)).findEmployeesAboveSalary(theSalary);
+    }
+
+    @Test
+    public void deleteAllEmployees_returnsNothing() {
+        // arrange
+        // act
+        employeeService.deleteAll();
+
+        // assert
+        verify(employeeRepository, times(1)).deleteAll();
+    }
+
+    @Test
+    public void deleteByShiftTypeSeasonal_returnsNothing() {
+        // arrange
+        // act
+        employeeService.deleteByShiftTypeSeasonal();
+
+        // assert
+        verify(employeeRepository, times(1)).deleteSeasonalEmployees();
+    }
+
+    @Test
+    public void findEmployeesByShiftType_returnEmployeeList() {
+        // arrange
+        ShiftType shiftType = ShiftType.FULL_TIME;
+
+        Employee employee1 = new Employee();
+        Employee employee2 = new Employee();
+        Employee employee3 = new Employee();
+
+        Profile profile1 = new Profile();
+        Profile profile2 = new Profile();
+        Profile profile3 = new Profile();
+
+        employee1.setProfile(profile1);
+        employee2.setProfile(profile2);
+        employee3.setProfile(profile3);
+
+        profile1.setShiftType(ShiftType.FULL_TIME);
+        profile2.setShiftType(ShiftType.FULL_TIME);
+        profile3.setShiftType(ShiftType.SEASONAL);
+
+        List<Employee> expectedEmployees = List.of(employee1, employee2);
+
+        when(employeeRepository.findEmployeesByShiftType(shiftType)).thenReturn(expectedEmployees);
+
+        // act
+        List<Employee> result = employeeService.findEmployeesByShiftType(shiftType);
+
+        // arrange
+        verify(employeeRepository, times(1)).findEmployeesByShiftType(shiftType);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(expectedEmployees, result);
     }
 }
