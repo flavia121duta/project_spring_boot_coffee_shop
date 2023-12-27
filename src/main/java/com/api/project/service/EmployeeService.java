@@ -65,40 +65,6 @@ public class EmployeeService {
         return employeeRepository.findEmployeesAboveSalary(theSalary);
     }
 
-    public Employee updateEmployee(Employee newEmployee, int theId) {
-        Optional<Employee> theEmployee = employeeRepository.findById(theId);
-
-        if (theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException(theId);
-        }
-
-        Employee dbEmployee = theEmployee.get();
-        dbEmployee.setFirstName(newEmployee.getFirstName());
-        dbEmployee.setLastName(newEmployee.getLastName());
-
-        return employeeRepository.save(dbEmployee);
-    }
-
-    public Employee updateEmployeeWithProfile(Employee newEmployee, int theId, int profileId) {
-        Optional<Employee> theEmployee = employeeRepository.findById(theId);
-        Optional<Profile> theProfile = profileRepository.findById(profileId);
-
-        if (theEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException(theId);
-        }
-
-        if (theProfile.isEmpty()) {
-            throw new ProfileNotFoundException(theId);
-        }
-
-        Employee dbEmployee = theEmployee.get();
-        dbEmployee.setFirstName(newEmployee.getFirstName());
-        dbEmployee.setLastName(newEmployee.getLastName());
-        dbEmployee.setProfile(theProfile.get());
-
-        return employeeRepository.save(dbEmployee);
-    }
-
     public List<Employee> findByLastName(String lastName) {
         List<Employee> theEmployees = employeeRepository.findByLastName(lastName);
 
@@ -115,6 +81,39 @@ public class EmployeeService {
 
     public List<Employee> findEmployeesWithNoSalesTaken() {
         return  employeeRepository.findEmployeesWithNoSalesTaken();
+    }
+
+    public Employee updateEmployee(Employee newEmployee, int theId) {
+        Optional<Employee> theEmployee = employeeRepository.findById(theId);
+
+        if (theEmployee.isEmpty()) {
+            throw new EmployeeNotFoundException(theId);
+        }
+
+        Employee dbEmployee = theEmployee.get();
+        dbEmployee.setFirstName(newEmployee.getFirstName());
+        dbEmployee.setLastName(newEmployee.getLastName());
+
+        return employeeRepository.save(dbEmployee);
+    }
+
+    public Employee updateEmployeeWithProfile(Employee newEmployee, int theId, int profileId) {
+        Optional<Employee> theEmployee = employeeRepository.findById(theId);
+        if (theEmployee.isEmpty()) {
+            throw new EmployeeNotFoundException(theId);
+        }
+
+        Optional<Profile> theProfile = profileRepository.findById(profileId);
+        if (theProfile.isEmpty()) {
+            throw new ProfileNotFoundException(theId);
+        }
+
+        Employee dbEmployee = theEmployee.get();
+        dbEmployee.setFirstName(newEmployee.getFirstName());
+        dbEmployee.setLastName(newEmployee.getLastName());
+        dbEmployee.setProfile(theProfile.get());
+
+        return employeeRepository.save(dbEmployee);
     }
 
     public void deleteById(int theId) {

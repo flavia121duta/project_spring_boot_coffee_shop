@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -83,6 +84,10 @@ public class ProductService {
         }
 
         return productRepository.getProductOrderedBetweenDates(date1, date2);
+    }
+
+    public List<Object[]> getAverageRatingAndReviewCountPerProduct() {
+        return productRepository.getAverageRatingAndReviewCountPerProduct();
     }
 
     public List<Product> getProductsWithoutAnyReview() {

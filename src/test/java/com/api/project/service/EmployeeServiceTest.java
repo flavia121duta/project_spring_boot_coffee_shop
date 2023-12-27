@@ -1,5 +1,6 @@
 package com.api.project.service;
 
+import com.api.project.exception.EmployeeNotFoundException;
 import com.api.project.exception.ProfileNotFoundException;
 import com.api.project.model.Employee;
 import com.api.project.model.Profile;
@@ -13,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +103,7 @@ public class EmployeeServiceTest {
 
         // assert
         assertEquals(
-                "The profile with the id " + profileId + " was not found",
+                "The profile with the id " + profileId + " was not found in the database",
                 result.getMessage(),
                 "Should be equal"
         );
@@ -137,6 +137,26 @@ public class EmployeeServiceTest {
     }
 
     @Test
+    @DisplayName("Find all the employees and return the result as a list...")
+    public void findAllEmployees_returnsListOfEmployees() {
+        // arrange
+        Employee employee1 = new Employee("John", "Doe");
+        Employee employee2 = new Employee("Jane", "Dip");
+
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee1);
+        employees.add(employee2);
+
+        when(employeeRepository.findAll()).thenReturn(employees);
+
+        // act
+        List<Employee> result = employeeService.findAll();
+
+        // assert
+        assertEquals(employees, result, "Should be equals");
+    }
+
+    @Test
     @DisplayName("Given an employee id as parameter, return the employee that has that id...")
     public void givenEmployeeId_findById_returnEmployee() {
         // arrange
@@ -166,30 +186,117 @@ public class EmployeeServiceTest {
 
         // assert
         assertEquals(
-                "The employee with the id: 1 was not found",
+                "The employee with the id 1 was not found in the database",
                 result.getMessage(),
                 "Should be equal"
         );
     }
 
     @Test
-    @DisplayName("Find all the employees and return the result as a list...")
-    public void findAllEmployees_returnsListOfEmployees() {
+    public void findEmployeesAboveSalary_returnListOfEmployees() {
+        // arrange
+        Profile profile1 = new Profile();
+        profile1.setSalary(2400.0);
+        Profile profile2 = new Profile();
+        profile2.setSalary(2700.0);
+        Profile profile3 = new Profile();
+        profile3.setSalary(2750.0);
+
+        Employee employee1 = new Employee();
+        Employee employee2 = new Employee();
+        Employee employee3 = new Employee();
+
+        employee1.setProfile(profile1);
+        employee2.setProfile(profile2);
+        employee3.setProfile(profile3);
+
+        double theSalary = 2500.0;
+        List<Employee> expectedEmployees = List.of(employee2, employee3);
+
+        when(employeeRepository.findEmployeesAboveSalary(theSalary)).thenReturn(expectedEmployees);
+
+        // act
+        List<Employee> result = employeeService.findEmployeesAboveSalary(theSalary);
+
+        // Assert
+        assertEquals(expectedEmployees.size(), result.size());
+        assertEquals(expectedEmployees, result);
+        verify(employeeRepository, times(1)).findEmployeesAboveSalary(theSalary);
+    }
+
+    @Test
+    public void employeesHavingSameLastNameAsParameter_findByLastName_returnEmployeeList() {
         // arrange
         Employee employee1 = new Employee("John", "Doe");
-        Employee employee2 = new Employee("Jane", "Dip");
+        Employee employee2 = new Employee("Ian", "Smith");
+        Employee employee3 = new Employee("Jane", "Doe");
 
         List<Employee> employees = new ArrayList<>();
         employees.add(employee1);
         employees.add(employee2);
+        employees.add(employee3);
 
-        when(employeeRepository.findAll()).thenReturn(employees);
+        when(employeeRepository.findByLastName("Doe")).thenReturn(employees);
 
         // act
-        List<Employee> result = employeeService.findAll();
+        List<Employee> result = employeeService.findByLastName("Doe");
 
         // assert
-        assertEquals(employees, result, "Should be equals");
+        assertEquals(employees, result, "Should be equal");
+    }
+
+    @Test
+    public void findEmployeesByShiftType_returnEmployeeList() {
+        // arrange
+        ShiftType shiftType = ShiftType.FULL_TIME;
+
+        Employee employee1 = new Employee();
+        Employee employee2 = new Employee();
+        Employee employee3 = new Employee();
+
+        Profile profile1 = new Profile();
+        Profile profile2 = new Profile();
+        Profile profile3 = new Profile();
+
+        employee1.setProfile(profile1);
+        employee2.setProfile(profile2);
+        employee3.setProfile(profile3);
+
+        profile1.setShiftType(ShiftType.FULL_TIME);
+        profile2.setShiftType(ShiftType.FULL_TIME);
+        profile3.setShiftType(ShiftType.SEASONAL);
+
+        List<Employee> expectedEmployees = List.of(employee1, employee2);
+
+        when(employeeRepository.findEmployeesByShiftType(shiftType)).thenReturn(expectedEmployees);
+
+        // act
+        List<Employee> result = employeeService.findEmployeesByShiftType(shiftType);
+
+        // arrange
+        verify(employeeRepository, times(1)).findEmployeesByShiftType(shiftType);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(expectedEmployees, result);
+    }
+
+    @Test
+    public void findEmployeesWithNoSalesTaken_returnListOfEmployees() {
+        // arrange
+        Employee employee1 = new Employee();
+        Employee employee2 = new Employee();
+        List<Employee> expectedList = List.of(employee1, employee2);
+
+        when(employeeRepository.findEmployeesWithNoSalesTaken()).thenReturn(expectedList);
+
+        // act
+        List<Employee> result = employeeService.findEmployeesWithNoSalesTaken();
+
+        // assert
+        verify(employeeRepository, times(1)).findEmployeesWithNoSalesTaken();
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(expectedList, result, "Should be equal");
     }
 
     @Test
@@ -234,31 +341,99 @@ public class EmployeeServiceTest {
 
         // assert
         assertEquals(
-                "The employee with the id: 2 was not found",
+                "The employee with the id 2 was not found in the database",
                 result.getMessage(),
                 "Should be equal"
         );
     }
 
     @Test
-    public void employeesHavingSameLastNameAsParameter_findByLastName_returnEmployeeList() {
+    public void givenNewEmployeeAndProfileId_updateEmployeeWithProfile_returnUpdatedEmployee() {
         // arrange
-        Employee employee1 = new Employee("John", "Doe");
-        Employee employee2 = new Employee("Ian", "Smith");
-        Employee employee3 = new Employee("Jane", "Doe");
+        int theId = 1;
+        int profileId = 2;
 
-        List<Employee> employees = new ArrayList<>();
-        employees.add(employee1);
-        employees.add(employee2);
-        employees.add(employee3);
+        Employee existingEmployee = new Employee("John", "Doe");
+        Profile newProfile = new Profile();
+        Employee updatedEmployee = new Employee("Jane", "Doe");
 
-        when(employeeRepository.findByLastName("Doe")).thenReturn(employees);
+        when(employeeRepository.findById(theId)).thenReturn(Optional.of(existingEmployee));
+        when(profileRepository.findById(profileId)).thenReturn(Optional.of(newProfile));
+        when(employeeRepository.save(existingEmployee)).thenReturn(updatedEmployee);
 
         // act
-        List<Employee> result = employeeService.findByLastName("Doe");
+        Employee result = employeeService.updateEmployeeWithProfile(new Employee(), theId, profileId);
+
+        // arrange
+        verify(employeeRepository, times(1)).findById(theId);
+        verify(profileRepository, times(1)).findById(profileId);
+        verify(employeeRepository, times(1)).save(existingEmployee);
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenEmployeeIdUnavailable_updateEmployeeWithProfile_throwsEmployeeNotFoundException() {
+        // arrange
+        int employeeId = 1;
+        int profileId = 2;
+
+        Employee employee = new Employee();
+        employee.setEmployeeId(2);
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+        EmployeeNotFoundException result = assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.updateEmployeeWithProfile(new Employee(), employeeId, profileId);
+        });
 
         // assert
-        assertEquals(employees, result, "Should be equal");
+        assertEquals(
+                "The employee with the id " + employeeId + " was not found in the database",
+                result.getMessage(),
+                "Should be equal"
+        );
+
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(profileRepository, never()).findById(any());
+        verify(employeeRepository, never()).save(any());
+    }
+
+    @Test
+    void givenProfileIdUnavailable_updateEmployeeWithProfile_throwsProfileNotFoundException() {
+        // arrange
+        int employeeId = 1;
+        int profileId = 1;
+
+        Employee existingEmployee = new Employee();
+        existingEmployee.setEmployeeId(employeeId);
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(existingEmployee));
+        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
+
+        // act
+        ProfileNotFoundException result = assertThrows(ProfileNotFoundException.class, () -> {
+            employeeService.updateEmployeeWithProfile(new Employee(), employeeId, profileId);
+        });
+
+        // assert
+        assertEquals(
+                "The profile with the id " + profileId + " was not found in the database",
+                result.getMessage(),
+                "Should be equal"
+        );
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(profileRepository, times(1)).findById(profileId);
+        verify(employeeRepository, never()).save(any());
+    }
+
+    @Test
+    public void deleteByShiftTypeSeasonal_returnsNothing() {
+        // arrange
+        // act
+        employeeService.deleteByShiftTypeSeasonal();
+
+        // assert
+        verify(employeeRepository, times(1)).deleteSeasonalEmployees();
     }
 
     @Test
@@ -289,42 +464,10 @@ public class EmployeeServiceTest {
 
         // assert
         assertEquals(
-                "The employee with the id: 1 was not found",
+                "The employee with the id 1 was not found in the database",
                 result.getMessage(),
                 "Should be equal"
         );
-    }
-
-    @Test
-    public void findEmployeesAboveSalary_returnValue() {
-        // arrange
-        Profile profile1 = new Profile();
-        profile1.setSalary(2400.0);
-        Profile profile2 = new Profile();
-        profile2.setSalary(2700.0);
-        Profile profile3 = new Profile();
-        profile3.setSalary(2750.0);
-
-        Employee employee1 = new Employee();
-        Employee employee2 = new Employee();
-        Employee employee3 = new Employee();
-
-        employee1.setProfile(profile1);
-        employee2.setProfile(profile2);
-        employee3.setProfile(profile3);
-
-        double theSalary = 2500.0;
-        List<Employee> expectedEmployees = List.of(employee2, employee3);
-
-        when(employeeRepository.findEmployeesAboveSalary(theSalary)).thenReturn(expectedEmployees);
-
-        // act
-        List<Employee> result = employeeService.findEmployeesAboveSalary(theSalary);
-
-        // Assert
-        assertEquals(expectedEmployees.size(), result.size());
-        assertEquals(expectedEmployees, result);
-        verify(employeeRepository, times(1)).findEmployeesAboveSalary(theSalary);
     }
 
     @Test
@@ -335,50 +478,5 @@ public class EmployeeServiceTest {
 
         // assert
         verify(employeeRepository, times(1)).deleteAll();
-    }
-
-    @Test
-    public void deleteByShiftTypeSeasonal_returnsNothing() {
-        // arrange
-        // act
-        employeeService.deleteByShiftTypeSeasonal();
-
-        // assert
-        verify(employeeRepository, times(1)).deleteSeasonalEmployees();
-    }
-
-    @Test
-    public void findEmployeesByShiftType_returnEmployeeList() {
-        // arrange
-        ShiftType shiftType = ShiftType.FULL_TIME;
-
-        Employee employee1 = new Employee();
-        Employee employee2 = new Employee();
-        Employee employee3 = new Employee();
-
-        Profile profile1 = new Profile();
-        Profile profile2 = new Profile();
-        Profile profile3 = new Profile();
-
-        employee1.setProfile(profile1);
-        employee2.setProfile(profile2);
-        employee3.setProfile(profile3);
-
-        profile1.setShiftType(ShiftType.FULL_TIME);
-        profile2.setShiftType(ShiftType.FULL_TIME);
-        profile3.setShiftType(ShiftType.SEASONAL);
-
-        List<Employee> expectedEmployees = List.of(employee1, employee2);
-
-        when(employeeRepository.findEmployeesByShiftType(shiftType)).thenReturn(expectedEmployees);
-
-        // act
-        List<Employee> result = employeeService.findEmployeesByShiftType(shiftType);
-
-        // arrange
-        verify(employeeRepository, times(1)).findEmployeesByShiftType(shiftType);
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(expectedEmployees, result);
     }
 }

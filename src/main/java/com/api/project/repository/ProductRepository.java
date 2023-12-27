@@ -2,6 +2,7 @@ package com.api.project.repository;
 
 import com.api.project.model.Product;
 import com.api.project.model.ProductType;
+import com.api.project.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +30,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE NOT EXISTS (SELECT r FROM Review r WHERE r.product.productId = p.productId)")
     List<Product> findProductsWithNoReview();
+
+    @Query("SELECT p, AVG(r.stars) AS averageRating, COUNT(r) AS reviewCount " +
+            "FROM Product p LEFT JOIN p.reviews r " +
+            "GROUP BY p.productId")
+    List<Object[]> getAverageRatingAndReviewCountPerProduct();
 }

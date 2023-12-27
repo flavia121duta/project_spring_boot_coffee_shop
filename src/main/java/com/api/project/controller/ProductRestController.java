@@ -65,6 +65,11 @@ public class ProductRestController {
         return ResponseEntity.ok().body(productService.getProductsWithoutAnyReview());
     }
 
+    @GetMapping("/average-rating/number-of-reviews")
+    public List<Object[]> getAverageRatingAndReviewCountPerProduct() {
+        return productService.getAverageRatingAndReviewCountPerProduct();
+    }
+
     @PostMapping
     public ResponseEntity<Product> create(@RequestBody @Valid ProductRequest theProduct) {
         return ResponseEntity
