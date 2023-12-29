@@ -4,7 +4,6 @@ import com.api.project.exception.CustomerNotFoundException;
 import com.api.project.exception.ProductNotFoundException;
 import com.api.project.model.Customer;
 import com.api.project.model.Product;
-import com.api.project.model.Profile;
 import com.api.project.model.Review;
 import com.api.project.repository.CustomerRepository;
 import com.api.project.repository.ProductRepository;

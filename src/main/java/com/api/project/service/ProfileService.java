@@ -23,6 +23,10 @@ public class ProfileService {
         this.employeeRepository = employeeRepository;
     }
 
+    public Profile createProfile(Profile theProfile) {
+        return profileRepository.save(theProfile);
+    }
+
     public List<Profile> findAll() {
         return profileRepository.findAll();
     }
@@ -33,10 +37,6 @@ public class ProfileService {
 
     public double getAverageSalary() {
         return profileRepository.getAverageSalary();
-    }
-
-    public Profile createProfile(Profile theProfile) {
-        return profileRepository.save(theProfile);
     }
 
     public Profile createProfileForEmployee(Profile theProfile, int employeeId) {
@@ -80,7 +80,6 @@ public class ProfileService {
         profile.getEmployee().setProfile(null);
 
         profileRepository.deleteById(theId);
-
     }
 
     public void deleteAll() {
