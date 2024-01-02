@@ -152,4 +152,47 @@ class ReviewServiceTest {
         assertThat(reviewList.size()).isEqualTo(2);
     }
 
+    @Test
+    public void givenExistingProductId_findAllReviewOfProduct_returnListOfReviews() {
+        // arrange
+        int productId = 1;
+        Product product = new Product();
+        product.setProductId(productId);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+
+        Review review1 = new Review();
+        review1.setProduct(product);
+
+        Review review2 = new Review();
+        review2.setProduct(product);
+
+        List<Review> extectedList = List.of(review1, review2);
+        when(reviewRepository.findAll()).thenReturn(extectedList);
+
+        // act
+        List<Review> actualList = reviewService.findAllReviewOfProduct(productId);
+
+        // assert
+        assertNotNull(actualList);
+        assertEquals(extectedList, actualList, "Should be equal");
+    }
+
+    @Test
+    public void givenNonexistentProductId_findAllReviewOfProduct_throwsProductNotFoundException() {
+        // arrange
+        int productId = 100;
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // act
+        ProductNotFoundException result = assertThrows(
+                ProductNotFoundException.class,
+                () -> reviewService.findAllReviewOfProduct(productId)
+        );
+
+        // assert
+        assertNotNull(result);
+        assertEquals("The product with the id " + productId + " was not found in the database", result.getMessage(), "Should be equal");
+    }
+
 }

@@ -2,7 +2,6 @@ package com.api.project.repository;
 
 import com.api.project.model.Product;
 import com.api.project.model.ProductType;
-import com.api.project.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
