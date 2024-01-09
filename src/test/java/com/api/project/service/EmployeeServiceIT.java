@@ -14,7 +14,7 @@ public class EmployeeServiceIT {
     private EmployeeService employeeService;
 
     @Test
-    @DisplayName("Create employee it...")
+    @DisplayName("Create employee IT...")
     public void createEmployeeTest() {
         // arrange
         Employee newEmployee = new Employee("Mihai", "Dascalescu");

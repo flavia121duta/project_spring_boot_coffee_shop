@@ -7,6 +7,7 @@ import com.api.project.model.ShiftType;
 import com.api.project.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class EmployeeRestController {
         if (profileId == null) {
             return ResponseEntity
                     .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(employeeService.createEmployee(
                             employeeMapper.convertRequestToEmployee(theEmployee)
                     ));
@@ -36,6 +38,7 @@ public class EmployeeRestController {
 
         return ResponseEntity
                 .ok()
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(employeeService.createEmployeeWithProfile(
                         employeeMapper.convertRequestToEmployee(theEmployee),
                         profileId
@@ -70,7 +73,7 @@ public class EmployeeRestController {
         return ResponseEntity.ok().body(employeeService.findEmployeesAboveSalary(theSalary));
     }
 
-    @GetMapping("/shift/{shiftType}")
+    @GetMapping("/shifts/{shiftType}")
     public ResponseEntity<List<Employee>> findEmployeesByShiftType(@PathVariable ShiftType shiftType) {
         return ResponseEntity.ok().body(employeeService.findEmployeesByShiftType(shiftType));
     }

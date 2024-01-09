@@ -77,12 +77,33 @@
 		<!-- TEST dependencies -->
 
 		<!-- OpenAPI  -->
+		<!-- http://localhost:8080/swagger-ui/index.html -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.0.3</version>
 		</dependency>
-		<!-- OpenAPI  -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>6.0.13</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- OpenAPI  -->
+
+		<!-- SWAGGER dependencies-->
+		<!-- http://localhost:8080/swagger-ui/index.html -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<!-- SWAGGER dependencies-->
 	</dependencies>
 
 	<build>

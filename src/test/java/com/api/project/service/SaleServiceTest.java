@@ -99,7 +99,7 @@ class SaleServiceTest {
 
     @Test
     void givenSaleRequestWithUnavailableProductId_createSale_throwsProductNotFoundException() {
-        // Arrange
+        // arrange
         int employeeId = 1;
         List<Integer> nonExistingProductIds = List.of(777, 888, 999);
         SaleRequest saleRequest = new SaleRequest();
