@@ -18,6 +18,9 @@ public class ProductRequest {
 
     private ProductType productType;
 
+    public ProductRequest() {
+    }
+
     public ProductRequest(String productName, double price, ProductType productType) {
         this.productName = productName;
         this.price = price;

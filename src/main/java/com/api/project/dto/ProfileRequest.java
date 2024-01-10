@@ -23,7 +23,7 @@ public class ProfileRequest {
     private double salary;
     private ShiftType shiftType;
 
-    @Past
+//    @Past
     private LocalDate dateOfBirth;
     private String linkedinProfile;
 

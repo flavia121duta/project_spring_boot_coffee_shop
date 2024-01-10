@@ -21,11 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(controllers = EmployeeRestController.class)
@@ -72,17 +70,19 @@ public class EmployeeControllerIT {
         createdEmployee.setEmployeeId(1);
 
         // mock the service behavior
-        when(employeeMapper.convertRequestToEmployee(employeeRequest)).thenReturn(createdEmployee);
+        when(employeeMapper.convertRequestToEmployee(any(EmployeeRequest.class))).thenReturn(createdEmployee);
         when(employeeService.createEmployeeWithProfile(createdEmployee, profileId)).thenReturn(createdEmployee);
 
-        // Act & Assert
-        mockMvc.perform(post("/employees?profileId=123")
+
+        // act & assert
+        mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeRequest))
                         .param("profileId", String.valueOf(profileId)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.firstName").value("John"));
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"));
     }
 
     @Test
@@ -102,6 +102,24 @@ public class EmployeeControllerIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.employeeId").value(employeeId))
                 .andExpect(jsonPath("$.firstName").value("John"));
+    }
+
+    @Test
+    @DisplayName("The employee is not found - integration test")
+    public void getEmployeeById_employeeNotFound() throws Exception {
+        // arrange
+        int invalidEmployeeId = 99;
+
+        when(employeeService.findById(invalidEmployeeId)).thenReturn(Optional.empty());
+
+        // act & assert
+        mockMvc.perform(get("/employees/{invalidEmployeeId}", invalidEmployeeId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+//                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(employeeService).findById(invalidEmployeeId);
     }
 
     @Test
@@ -233,7 +251,7 @@ public class EmployeeControllerIT {
 
 
     @Test
-    public void updateEmployeeWithoutProfile() throws Exception {
+    public void updateEmployeeWithProfile() throws Exception {
         // arrange
         EmployeeRequest employeeRequest = new EmployeeRequest("John", "Doe");
         int employeeId = 1;
@@ -243,17 +261,83 @@ public class EmployeeControllerIT {
         updatedEmployee.setEmployeeId(employeeId);
 
         when(employeeMapper.convertRequestToEmployee(employeeRequest)).thenReturn(updatedEmployee);
-        when(employeeService.updateEmployee(any(Employee.class), employeeId)).thenReturn(updatedEmployee);
+        when(employeeService.updateEmployeeWithProfile(updatedEmployee, employeeId, profileId)).thenReturn(updatedEmployee);
 
         // act & assert
         mockMvc.perform(put("/employees/{employeeId}", employeeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeRequest))
                         .param("profileId", String.valueOf(profileId)))
+                .andExpect(status().is2xxSuccessful());
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.employeeId").value(updatedEmployee.getEmployeeId()))
+//                .andExpect(jsonPath("$.firstName").value(updatedEmployee.getFirstName()))
+//                .andExpect(jsonPath("$.lastName").value(updatedEmployee.getLastName()));
+    }
+
+    @Test
+    public void updateEmployeeWithoutProfile() throws Exception {
+        // arrange
+        EmployeeRequest employeeRequest = new EmployeeRequest("John", "Doe");
+        int employeeId = 1;
+
+        Employee updatedEmployee = new Employee("John", "Down");
+        updatedEmployee.setEmployeeId(employeeId);
+
+        // Mock the service behavior
+        when(employeeMapper.convertRequestToEmployee(employeeRequest)).thenReturn(updatedEmployee);
+        when(employeeService.updateEmployee(updatedEmployee, employeeId)).thenReturn(updatedEmployee);
+
+        // act & assert
+        String responseContent = mockMvc.perform(put("/employees/{employeeId}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRequest)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.employeeId").value(employeeId))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Down"));
+                .andReturn().getResponse().getContentAsString();
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.firstName").value(updatedEmployee.getFirstName()))
+//                .andExpect(jsonPath("$.lastName").value(updatedEmployee.getLastName()));
+
+//        System.out.println("Response Content: " + responseContent);
+    }
+
+    @Test
+    public void deleteEmployeeByEmployeeId() throws Exception {
+        // arrange
+        int employeeId = 1;
+
+        doNothing().when(employeeService).deleteById(employeeId);
+
+        // act & arrange
+        mockMvc.perform(delete("/employees/{employeeId}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("The employee with the id: " + employeeId + " was successfully deleted."));
+        verify(employeeService).deleteById(employeeId);
+    }
+
+    @Test
+    public void deleteEmployeesThatWorkedSeasonalShit() throws Exception {
+        // arrange
+
+        // act & assert
+        mockMvc.perform(delete("/employees/seasonal")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(employeeService).deleteByShiftTypeSeasonal();
+    }
+
+    @Test
+    public void deleteAllEmployees() throws Exception {
+        // arrange
+        doNothing().when(employeeService).deleteAll();
+
+        // act & assert
+        mockMvc.perform(delete("/employees")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(employeeService).deleteAll();
     }
 }

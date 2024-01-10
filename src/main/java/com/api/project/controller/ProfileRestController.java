@@ -29,12 +29,21 @@ public class ProfileRestController {
         if (employeeId == null) {
             return ResponseEntity
                     .ok()
-                    .body(profileService.createProfile(profileMapper.profileRequestToProfile(theProfile)));
+                    .body(
+                            profileService.createProfile(
+                                    profileMapper.profileRequestToProfile(theProfile)
+                            )
+                    );
         }
 
         return ResponseEntity
                 .ok()
-                .body(profileService.createProfileForEmployee(profileMapper.profileRequestToProfile(theProfile), employeeId));
+                .body(
+                        profileService.createProfileForEmployee(
+                                profileMapper.profileRequestToProfile(theProfile),
+                                employeeId
+                        )
+                );
     }
 
     @GetMapping

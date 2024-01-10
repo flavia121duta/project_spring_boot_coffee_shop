@@ -12,6 +12,9 @@ public class EmployeeRequest {
     @NotBlank(message = "Last name should not be blank!")
     private String lastName;
 
+    public EmployeeRequest() {
+    }
+
     public EmployeeRequest(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
