@@ -75,14 +75,14 @@ public class ProductService {
         return theProduct.get().getReviews();
     }
 
-    public List<Product> getProductOrderedBetweenDates(LocalDate date1, LocalDate date2) {
+    public List<Product> getProductsOrderedBetweenDates(LocalDate date1, LocalDate date2) {
         if (date1.isAfter(date2)) {
             LocalDate auxDate = date1;
             date1 = date2;
             date2 = auxDate;
         }
 
-        return productRepository.getProductOrderedBetweenDates(date1, date2);
+        return productRepository.getProductsOrderedBetweenDates(date1, date2);
     }
 
     public List<Object[]> getAverageRatingAndReviewCountPerProduct() {

@@ -25,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     void modifyPriceDuringChristmasHoliday(double discount, int id);
 
     @Query("SELECT DISTINCT p FROM Sale s INNER JOIN s.products p WHERE CAST(s.timeOfOrder as date) BETWEEN :date1 AND :date2")
-    List<Product> getProductOrderedBetweenDates(LocalDate date1, LocalDate date2);
+    List<Product> getProductsOrderedBetweenDates(LocalDate date1, LocalDate date2);
 
     @Query("SELECT p FROM Product p WHERE NOT EXISTS (SELECT r FROM Review r WHERE r.product.productId = p.productId)")
     List<Product> findProductsWithNoReview();

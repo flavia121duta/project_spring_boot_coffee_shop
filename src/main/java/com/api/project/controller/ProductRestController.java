@@ -41,7 +41,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/product-name/{productName}")
-    public ResponseEntity<?> getProductsByName(@PathVariable String productName) {
+    public ResponseEntity<?> getProductByName(@PathVariable String productName) {
         return ResponseEntity.ok().body(productService.getProductByName(productName));
     }
 
@@ -56,8 +56,8 @@ public class ProductRestController {
     }
 
     @GetMapping("/sales/sold")
-    public ResponseEntity<List<Product>> getProductOrderedBetweenDates(@RequestParam LocalDate dateStart, @RequestParam LocalDate dateEnd) {
-        return ResponseEntity.ok().body(productService.getProductOrderedBetweenDates(dateStart, dateEnd));
+    public ResponseEntity<List<Product>> getProductsOrderedBetweenDates(@RequestParam LocalDate dateStart, @RequestParam LocalDate dateEnd) {
+        return ResponseEntity.ok().body(productService.getProductsOrderedBetweenDates(dateStart, dateEnd));
     }
 
     @GetMapping("/no-reviews")

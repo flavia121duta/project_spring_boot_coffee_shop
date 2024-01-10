@@ -244,13 +244,13 @@ class ProductServiceTest {
         sale.setDateOfOrder("2023-12-20");
         sale.setProducts(expectedList);
 
-        when(productRepository.getProductOrderedBetweenDates(date1, date2)).thenReturn(expectedList);
+        when(productRepository.getProductsOrderedBetweenDates(date1, date2)).thenReturn(expectedList);
 
-        List<Product> actualList = productService.getProductOrderedBetweenDates(date1, date2);
+        List<Product> actualList = productService.getProductsOrderedBetweenDates(date1, date2);
 
         assertNotNull(actualList);
         assertEquals(expectedList, actualList);
-        verify(productRepository, times(1)).getProductOrderedBetweenDates(date1, date2);
+        verify(productRepository, times(1)).getProductsOrderedBetweenDates(date1, date2);
     }
 
     @Test
