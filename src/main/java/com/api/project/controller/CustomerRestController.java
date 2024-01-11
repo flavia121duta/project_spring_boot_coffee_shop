@@ -53,7 +53,7 @@ public class CustomerRestController {
         );
     }
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/products/{productId}")
     public ResponseEntity<List<Customer>> getCustomersWhoSubmitterReviewsToProductByProductId(@PathVariable int productId) {
         return ResponseEntity.ok().body(customerService.getCustomersWhoSubmitterReviewsToProductByProductId(productId));
     }
