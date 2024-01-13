@@ -4,6 +4,7 @@ import com.api.project.exception.EmployeeNotFoundException;
 import com.api.project.exception.ProfileNotFoundException;
 import com.api.project.model.Employee;
 import com.api.project.model.Profile;
+import com.api.project.model.Sale;
 import com.api.project.model.ShiftType;
 import com.api.project.repository.EmployeeRepository;
 import com.api.project.repository.ProfileRepository;
@@ -121,6 +122,11 @@ public class EmployeeService {
 
         if(theEmployee.isEmpty()) {
             throw new EmployeeNotFoundException(theId);
+        }
+
+        List<Sale> salesTookByEmployee = theEmployee.get().getSales();
+        for(Sale sale: salesTookByEmployee) {
+            sale.setEmployee(null);
         }
 
         employeeRepository.deleteById(theId);

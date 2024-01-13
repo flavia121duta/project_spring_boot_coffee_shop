@@ -24,7 +24,12 @@ public class Employee {
     private Profile profile;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", cascade = {
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
     private List<Sale> sales = new ArrayList<>();
 
     public Employee() {}

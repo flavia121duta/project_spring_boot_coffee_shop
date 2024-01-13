@@ -1,8 +1,10 @@
 package com.api.project.exception;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 public class ErrorResponse {
+    public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private int status;
     private String message;
     private LocalDateTime timestamp;
@@ -17,6 +19,7 @@ public class ErrorResponse {
         this.status = status;
         this.message = message;
         this.timestamp = timestamp;
+//        this.timestamp = LocalDateTime.parse(DATE_FORMAT.format(timestamp));;
     }
 
     public void setStatus(int status) {
@@ -37,5 +40,6 @@ public class ErrorResponse {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+//        this.timestamp = LocalDateTime.parse(DATE_FORMAT.format(timestamp));
     }
 }

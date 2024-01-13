@@ -4,6 +4,7 @@ import com.api.project.exception.CustomerNotFoundException;
 import com.api.project.exception.ProductNotFoundException;
 import com.api.project.model.Customer;
 import com.api.project.model.Product;
+import com.api.project.model.Review;
 import com.api.project.repository.CustomerRepository;
 import com.api.project.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,11 @@ public class CustomerService {
 
         if(theCustomer.isEmpty()) {
             throw new CustomerNotFoundException(theId);
+        }
+
+        List<Review> reviewsGivenByCustomer = theCustomer.get().getReviews();
+        for(Review review: reviewsGivenByCustomer) {
+            review.setCustomer(null);
         }
 
         customerRepository.deleteById(theId);

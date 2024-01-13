@@ -90,7 +90,7 @@ public class ProductRestController {
     @PutMapping("/discount/{productId}")
     public void addDiscountToProduct(@RequestParam(required = false) Double discount, @PathVariable int productId) {
         if (discount == null) {
-            discount = 15.0;
+            discount = 25.0;
         }
 
         productService.updatePriceDuringChristmasHoliday(discount, productId);

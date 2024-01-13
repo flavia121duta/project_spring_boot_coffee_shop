@@ -76,8 +76,7 @@ class ReviewServiceTest {
 
         when(productRepository.findById(product.getProductId()))
                 .thenReturn(Optional.empty());
-        when(customerRepository.findById(customer.getCustomerId()))
-                .thenReturn(Optional.of(customer));
+
         // Act
         ProductNotFoundException exception = assertThrows(ProductNotFoundException.class,
                 () -> reviewService.create(review, product.getProductId(), customer.getCustomerId()));

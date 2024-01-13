@@ -65,7 +65,7 @@ class ProductServiceTest {
         );
 
         // assert
-        assertEquals("A product with the same name \"" + product.getProductName() + " \"already exists.", exception.getMessage());
+        assertEquals("A product with the same name '" + product.getProductName() + "' already exists.", exception.getMessage());
         verify(productRepository, times(0)).save(product);
     }
 

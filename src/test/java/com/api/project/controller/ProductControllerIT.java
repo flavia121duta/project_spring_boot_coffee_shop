@@ -32,7 +32,7 @@ class ProductControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @MockBean
     private ProductService productService;
