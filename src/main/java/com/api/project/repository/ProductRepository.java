@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Modifying
     @Query(nativeQuery = true,
             value = "UPDATE Product p SET p.price = ROUND(p.price * (1 - :discount/100), 2)  WHERE p.product_id = :id " +
-                    "AND CURRENT_DATE BETWEEN '2023-12-20' AND '2024-12-20'")
+                    "AND CURRENT_DATE BETWEEN '2024-01-18' AND '2024-02-03'")
     void modifyPriceDuringChristmasHoliday(double discount, int id);
 
     @Query("SELECT DISTINCT p FROM Sale s INNER JOIN s.products p WHERE CAST(s.timeOfOrder as date) BETWEEN :date1 AND :date2")

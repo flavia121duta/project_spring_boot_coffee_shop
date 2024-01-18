@@ -13,8 +13,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "DELETE e FROM Employee e INNER JOIN Profile p ON e.profile_id = p.profile_id WHERE p.shift_type = 'SEASONAL'" +
-                    " AND DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), p.date_of_birth)), '%Y') < 21")
+            value = "DELETE e FROM Employee e INNER JOIN Profile p ON e.profile_id = p.profile_id WHERE p.shift_type = 'SEASONAL'")
+//                    " AND DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), p.date_of_birth)), '%Y') < 21")
     void deleteSeasonalEmployees();
 
     @Query("SELECT e FROM Employee e INNER JOIN Profile p ON p.profileId = e.profile.profileId WHERE p.salary >= :theSalary")
